@@ -4,7 +4,7 @@ import RolePermissions from "./RolePermissions.model.js";
 import Users from "./Users.model.js";
 import Profiles from "./Profiles.model.js";
 import UserRoles from "./UserRoles.model.js";
-import Tokens from "./refreshTokens.model.js";
+import Tokens from "./RefreshTokens.model.js"
 
 
 
