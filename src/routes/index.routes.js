@@ -1,0 +1,46 @@
+import express from 'express';
+import { deleteRoleByIdController, editRoleController, getRolesByNameController, getRolesController, postRoleController } from '../controllers/Role.Controller.js';
+import { deletePermissionByIdController, editPermissionByIdController, getPermissionsController, postPermissionController } from '../controllers/Permission.Controller.js';
+import { deleteRolePermissionByIdController, postRolePermissionController } from '../controllers/RolePermission.Controller.js';
+import { getAllUsersController, getUserLoginByIdController, LoginController, LogoutUserController, postUserControlller, refreshTokenController, resendOtpController, verfifyEmailUserController } from '../controllers/User.Controller.js';
+import { Authenticate } from '../middlewares/Authentication.js';
+import { hasPermission } from '../middlewares/HasPermission.js';
+import { addUserController } from '../controllers/SuperAdmin.Controller.js';
+const router = express.Router();
+
+//welcome
+router.get('/', (req, res) => {
+    res.send('Welcome to the API');
+})
+
+//roles routes
+router.post('/roles', Authenticate, hasPermission('super admin', 'post'), postRoleController);
+router.get('/roles', getRolesController);
+router.put('/roles/:id', Authenticate, hasPermission('super admin', 'edit'), editRoleController);
+router.get('/roles/search', getRolesByNameController);
+router.delete('/roles/:id', Authenticate, hasPermission('super admin', 'delete'), deleteRoleByIdController);
+
+//permissions routes
+router.post('/permissions', Authenticate, hasPermission('super admin', 'post'), postPermissionController);
+router.get('/permissions', getPermissionsController);
+router.put('/permissions/:id', Authenticate, hasPermission('super admin', 'edit'), editPermissionByIdController);
+router.delete('/Permissions/:id', Authenticate, hasPermission('super admin', 'delete'), deletePermissionByIdController);
+
+//role-permissions routes
+router.post('/role-permissions', Authenticate, hasPermission('super admin', 'post'), postRolePermissionController);
+router.delete('/role-permissions/:id', Authenticate, hasPermission('super admin', 'delete'), deleteRolePermissionByIdController);
+
+//users
+router.post('/register', postUserControlller);
+router.get('/users', Authenticate, hasPermission('super admin', 'get'), getAllUsersController);
+router.put('/users/:email', verfifyEmailUserController);
+router.put('/resendotp/:email', resendOtpController);
+
+router.post('/Login', LoginController);
+router.delete('/logout', LogoutUserController);
+router.get('/refresh-token', refreshTokenController);
+router.get('/myusers', Authenticate, hasPermission('user', 'get'), getUserLoginByIdController);
+
+router.post('/add-users', Authenticate, hasPermission('super admin', 'post'), addUserController);
+
+export default router;
