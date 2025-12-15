@@ -20,6 +20,15 @@ export const hasPermission = (module, action) => {
                 return res.status(401).json({ message: "User not found" });
             }
 
+            // 🔥 SUPER ADMIN BYPASS
+            const isSuperAdmin = user.roles.some(
+                role => role.name === 'super admin'
+            );
+
+            if (isSuperAdmin) {
+                return next();
+            }
+
             const permissions = user.roles.flatMap(role => role.permissions);
 
             const allowed = permissions.some(
