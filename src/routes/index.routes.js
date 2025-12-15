@@ -5,7 +5,7 @@ import { deleteRolePermissionByIdController, postRolePermissionController } from
 import { getAllUsersController, getUserLoginByIdController, LoginController, LogoutUserController, postUserControlller, refreshTokenController, resendOtpController, verfifyEmailUserController } from '../controllers/User.Controller.js';
 import { Authenticate } from '../middlewares/Authentication.js';
 import { hasPermission } from '../middlewares/HasPermission.js';
-import { addUserController } from '../controllers/SuperAdmin.Controller.js';
+import { addUserController, deleteUserController } from '../controllers/SuperAdmin.Controller.js';
 import { postUserRoleController } from '../controllers/UserRole.Controller.js';
 const router = express.Router();
 
@@ -43,7 +43,7 @@ router.get('/refresh-token', refreshTokenController);
 router.get('/myusers', Authenticate, hasPermission('user', 'get'), getUserLoginByIdController);
 
 router.post('/add-users', Authenticate, hasPermission('super admin', 'post'), addUserController);
-
 router.post("/user-role", Authenticate, hasPermission('super admin', 'post'), postUserRoleController);
+router.delete("/users/:email", Authenticate, hasPermission('super admin', 'delete'), deleteUserController);
 
 export default router;

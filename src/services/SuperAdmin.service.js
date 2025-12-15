@@ -27,6 +27,15 @@ class SuperAdminService {
         return user.id;
 
     }
+
+    async deleteUser(email) {
+        const user = await this._Users.findOne({ where: { email } });
+        if (!user) {
+            throw new Error("User not found");
+        }
+        await this._Users.destroy({ where: { email } });
+        return "User deleted";
+    }
 }
 
 export default SuperAdminService;

@@ -15,3 +15,19 @@ export const addUserController = async (req, res) => {
         })
     }
 }
+
+export const deleteUserController = async (req, res) => {
+    try {
+        const { email } = req.params;
+        const deleteUser = await new SuperAdminService().deleteUser(email);
+        res.status(200).json({
+            status: 'success',
+            data: deleteUser
+        })
+    } catch (error) {
+        res.status(error.status || 400).json({
+            status: 'fail',
+            message: error.message
+        })
+    }
+}

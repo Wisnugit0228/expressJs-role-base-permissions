@@ -33,12 +33,12 @@ class RoleService {
     async getRoles() {
 
         const roles = await this._Roles.findAll({
-            attributes: ['name', 'description'],
+            attributes: ['id', 'name', 'description'],
             include: {
                 model: Permissions,
                 as: 'permissions',
                 attributes: ['module', 'action', 'description'],
-                through: { attributes: [] }
+                through: { attributes: ['id'] }
             }
         })
         if (!roles) {
