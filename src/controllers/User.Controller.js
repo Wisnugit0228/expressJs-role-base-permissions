@@ -113,7 +113,7 @@ export const refreshTokenController = async (req, res) => {
         const token = await new UserService().refreshToken(refreshToken);
         res.status(200).json({
             status: 'success',
-            data: token.accessToken
+            data: token
         })
     } catch (error) {
         res.status(error.status || 400).json({

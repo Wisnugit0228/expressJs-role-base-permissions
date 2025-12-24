@@ -17,8 +17,10 @@ class UserService {
     }
 
     async uniqUserEmail(email) {
+
         const user = await this._Users.findOne({ where: { email } });
         if (user) {
+            console.log(email);
             throw new Error("Email already exists");
         }
     }
@@ -81,6 +83,7 @@ class UserService {
         const newUser = await this._Users.create({
             id,
             email,
+            status: 'inactive',
             password: hashedPw
         });
         if (!newUser) {
@@ -154,7 +157,7 @@ class UserService {
                 {
                     model: Profiles,
                     as: 'profile',
-                    attributes: ['gender']
+                    attributes: ['name', 'phone', 'avatar', 'address', 'gender']
                 },
                 {
                     model: Roles,
@@ -194,6 +197,7 @@ class UserService {
         const refreshToken = jwt.sign({ userId, email }, process.env.REFRESH_TOKEN_SECRET, { expiresIn: '30d' });
 
         const expiresAt = moment().add(30, 'days').toDate();
+        const last_login_at = new Date(Date.now());
         const id = nanoid(16);
         await this._Tokens.create({
             id,
@@ -203,7 +207,13 @@ class UserService {
             user_agent,
             ip_address,
             revoked: false
-        })
+        });
+
+        const rest = await this._Users.update({
+            last_login_at,
+        }, { where: { email } })
+
+
 
         return {
             accessToken,

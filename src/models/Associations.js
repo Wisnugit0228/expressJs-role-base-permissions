@@ -5,7 +5,7 @@ import Users from "./Users.model.js";
 import Profiles from "./Profiles.model.js";
 import UserRoles from "./UserRoles.model.js";
 import Tokens from "./RefreshTokens.model.js"
-
+import ResetPassword from "./ResetPasswords.models.js";
 
 
 Users.hasOne(Profiles, {
@@ -22,6 +22,17 @@ Profiles.belongsTo(Users, {
 Users.belongsToMany(Roles, {
     as: 'roles',
     through: UserRoles,
+    foreignKey: 'user_id'
+})
+
+Users.hasMany(ResetPassword, {
+    as: 'resetPassword',
+    foreignKey: 'user_id',
+    onDelete: 'CASCADE'
+});
+
+ResetPassword.belongsTo(Users, {
+    as: 'user',
     foreignKey: 'user_id'
 })
 
@@ -55,4 +66,4 @@ Permissions.belongsToMany(Roles, {
 
 
 
-export { UserRoles, Users, Profiles, Roles, Permissions, RolePermissions, Tokens };
+export { UserRoles, Users, Profiles, Roles, Permissions, RolePermissions, Tokens, ResetPassword };

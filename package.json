@@ -20,6 +20,7 @@
     "sequelize-cli": "^6.6.3"
   },
   "dependencies": {
+    "aws-sdk": "^2.1693.0",
     "bcrypt": "^6.0.0",
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.5",
@@ -27,10 +28,12 @@
     "express": "^5.2.1",
     "joi": "^18.0.2",
     "jsonwebtoken": "^9.0.3",
+    "multer": "^2.0.2",
     "mysql2": "^3.15.3",
     "nanoid": "^5.1.6",
     "nodemailer": "^7.0.11",
     "nodemon": "^3.1.11",
-    "sequelize": "^6.37.7"
+    "sequelize": "^6.37.7",
+    "uuid": "^13.0.0"
   }
 }

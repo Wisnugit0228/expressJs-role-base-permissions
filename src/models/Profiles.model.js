@@ -42,6 +42,9 @@ Profiles.init({
     updated_at: {
         type: DataTypes.DATE,
         allowNull: true
+    },
+    key_avatar: {
+        type: DataTypes.STRING
     }
 
 }, {

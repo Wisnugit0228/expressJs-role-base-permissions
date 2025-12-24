@@ -31,3 +31,18 @@ export const deleteUserController = async (req, res) => {
         })
     }
 }
+
+export const getLoginHistoriesController = async (req, res) => {
+    try {
+        const data = await new SuperAdminService().loginHistories();
+        res.status(200).json({
+            status: 'success',
+            data
+        })
+    } catch (error) {
+        res.status(error.status || 400).json({
+            status: 'fail',
+            message: error.message
+        })
+    }
+}

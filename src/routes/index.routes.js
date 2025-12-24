@@ -5,9 +5,13 @@ import { deleteRolePermissionByIdController, postRolePermissionController } from
 import { getAllUsersController, getUserLoginByIdController, LoginController, LogoutUserController, postUserControlller, refreshTokenController, resendOtpController, verfifyEmailUserController } from '../controllers/User.Controller.js';
 import { Authenticate } from '../middlewares/Authentication.js';
 import { hasPermission } from '../middlewares/HasPermission.js';
-import { addUserController, deleteUserController } from '../controllers/SuperAdmin.Controller.js';
+import { addUserController, deleteUserController, getLoginHistoriesController } from '../controllers/SuperAdmin.Controller.js';
 import { postUserRoleController } from '../controllers/UserRole.Controller.js';
+import { deleteAvatarCOntroller, getProfileController, putAvatarProfileCOntroller, putProfileController } from '../controllers/Profile.Controller.js';
+import multer from 'multer';
+import { resendOtpResetController, resetpasswordController, sendOtpResetPasswordController, verifyOtpCOntroller } from '../controllers/ResetPassword.Controller.js';
 const router = express.Router();
+const upload = multer({ storage: multer.memoryStorage() });
 
 //welcome
 router.get('/', (req, res) => {
@@ -16,7 +20,7 @@ router.get('/', (req, res) => {
 
 //roles routes
 router.post('/roles', Authenticate, hasPermission('super admin', 'post'), postRoleController);
-router.get('/roles', getRolesController);
+router.get('/roles', Authenticate, hasPermission('super admin', 'get'), getRolesController);
 router.put('/roles/:id', Authenticate, hasPermission('super admin', 'edit'), editRoleController);
 router.get('/roles/search', getRolesByNameController);
 router.delete('/roles/:id', Authenticate, hasPermission('super admin', 'delete'), deleteRoleByIdController);
@@ -37,13 +41,29 @@ router.get('/users', Authenticate, hasPermission('super admin', 'get'), getAllUs
 router.put('/users/:email', verfifyEmailUserController);
 router.put('/resendotp/:email', resendOtpController);
 
+//profile
+router.get('/profiles', Authenticate, getProfileController);
+router.put('/profiles', Authenticate, upload.single('image'), putProfileController);
+router.put('/profiles/avatar', Authenticate, upload.single('image'), putAvatarProfileCOntroller);
+router.delete('/profiles/avatar', Authenticate, deleteAvatarCOntroller);
+
 router.post('/Login', LoginController);
 router.delete('/logout', LogoutUserController);
 router.get('/refresh-token', refreshTokenController);
-router.get('/myusers', Authenticate, hasPermission('user', 'get'), getUserLoginByIdController);
+router.get('/myusers', Authenticate, getUserLoginByIdController);
 
+//super admin
 router.post('/add-users', Authenticate, hasPermission('super admin', 'post'), addUserController);
 router.post("/user-role", Authenticate, hasPermission('super admin', 'post'), postUserRoleController);
 router.delete("/users/:email", Authenticate, hasPermission('super admin', 'delete'), deleteUserController);
+router.get('/login-histories', Authenticate, hasPermission('super admin', 'get'), getLoginHistoriesController);
+
+//reset password
+router.post('/reset-password', sendOtpResetPasswordController);
+router.put('/verify-otp/:email', verifyOtpCOntroller);
+router.put('/resend-otp/:email', resendOtpResetController)
+router.put('/reset-password', resetpasswordController);
+
+
 
 export default router;

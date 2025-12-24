@@ -1,11 +1,12 @@
 import { nanoid } from "nanoid";
-import { Users } from "../models/Associations.js";
+import { Users, Tokens } from "../models/Associations.js";
 import UserService from "./User.service.js";
 import bcrypt from "bcrypt";
 
 class SuperAdminService {
     constructor() {
         this._Users = Users;
+        this._Tokens = Tokens;
     }
 
     async createUser({ email, password, role }) {
@@ -35,6 +36,19 @@ class SuperAdminService {
         }
         await this._Users.destroy({ where: { email } });
         return "User deleted";
+    }
+
+    async loginHistories() {
+        const loginHistories = await this._Users.findAll({
+            attributes: ['email'],
+            include: {
+                model: this._Tokens,
+                as: 'tokens',
+                attributes: ['user_agent', 'ip_address', 'created_at'],
+                where: { revoked: false }
+            }
+        })
+        return loginHistories;
     }
 }
 
