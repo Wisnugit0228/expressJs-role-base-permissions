@@ -14,6 +14,7 @@ class UserService {
         this._UserRoles = UserRoles;
         this._Roles = Roles;
         this._Tokens = Tokens;
+        this._Permissions = Permissions;
     }
 
     async uniqUserEmail(email) {
@@ -67,7 +68,6 @@ class UserService {
         const role = await this._Roles.findOne({ where: { name } });
         const roleId = role.id;
 
-        console.log(roleId);
         const id = nanoid(16);
         await this._UserRoles.create({
             id,
@@ -125,11 +125,12 @@ class UserService {
         };
     }
 
-    async getUserLoginById(id) {
+    async getUserLoginById(userId) {
 
-
+        console.log(userId);
+        
         const user = await this._Users.findOne({
-            where: { id },
+            where: { id: userId },
             attributes: ['email', 'status'],
             include: [
                 {
@@ -177,7 +178,21 @@ class UserService {
     }
 
     async LoginUser({ email, password, user_agent, ip_address }) {
-        const user = await this._Users.findOne({ where: { email } });
+        const user = await this._Users.findOne({ 
+            where: { email },
+            include: {
+                model: this._Roles,
+                    as: 'roles',
+                    attributes: ['name'],
+                    include: {
+                        model: this._Permissions,
+                        as: 'permissions',
+                        attributes: ['module', 'action', 'description'],
+                        through: { attributes: [] }
+                    },
+                    through: { attributes: [] }
+            }
+        });
         if (!user) {
             throw new Error("User not found");
         };
@@ -192,8 +207,22 @@ class UserService {
             throw new Error("wrong password");
         };
 
+        const roles = user.roles.map(r => r.name);
+        const permissions = user.roles.flatMap(role =>
+        role.permissions.map(p => `${p.module}:${p.action}`)
+        );
+
+        const uniquePermissions = [...new Set(permissions)];
+
+        const payload = {
+            sub: user.id,
+            email: user.email,
+            roles,
+            permissions: uniquePermissions,
+        };
+
         const userId = user.id;
-        const accessToken = jwt.sign({ userId, email }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '15m' });
+        const accessToken = jwt.sign(payload, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '15m' });
         const refreshToken = jwt.sign({ userId, email }, process.env.REFRESH_TOKEN_SECRET, { expiresIn: '30d' });
 
         const expiresAt = moment().add(30, 'days').toDate();
@@ -263,8 +292,37 @@ class UserService {
 
         }
         const userId = token.user.id;
+        const user = await this._Users.findOne({
+            where: {id: userId},
+            attributes: ['id', 'email'],
+            include: {
+                model: this._Roles,
+                    as: 'roles',
+                    attributes: ['name'],
+                    include: {
+                        model: this._Permissions,
+                        as: 'permissions',
+                        attributes: ['module', 'action', 'description'],
+                        through: { attributes: [] }
+                },
+                through: { attributes: [] }
+            }
+        });
+        const roles = user.roles.map(r => r.name);
+        const permissions = user.roles.flatMap(role =>
+        role.permissions.map(p => `${p.module}:${p.action}`)
+        );
+
+        const uniquePermissions = [...new Set(permissions)];
+
+        const payload = {
+            sub: user.id,
+            email: user.email,
+            roles,
+            permissions: uniquePermissions,
+        };
         const email = token.user.email;
-        const accessToken = jwt.sign({ userId, email }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '15m' });
+        const accessToken = jwt.sign(payload, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '15m' });
 
         return {
             accessToken

@@ -3,7 +3,7 @@ import { Users, Roles, Permissions } from "../models/Associations.js";
 export const hasPermission = (module, action) => {
     return async (req, res, next) => {
         try {
-            const userId = req.userId;
+            const {userId} = req.user;
 
             const user = await Users.findOne({
                 where: { id: userId },

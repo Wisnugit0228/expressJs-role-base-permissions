@@ -6,8 +6,7 @@ export const postPermissionController = async (req, res) => {
         const newPermission = await new PermissionService().createPermission({ module, action, description });
         res.status(201).json({
             status: 'success',
-            data: newPermission
-        })
+        });
     } catch (error) {
         res.status(error.status || 400).json({
             status: 'fail',
@@ -22,7 +21,7 @@ export const getPermissionsController = async (req, res) => {
         res.status(200).json({
             status: 'success',
             data: permissions
-        })
+        });
     } catch (error) {
         res.status(error.status || 400).json({
             status: 'fail',

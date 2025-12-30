@@ -2,8 +2,8 @@ import ProfileService from "../services/Profile.service.js";
 
 export const getProfileController = async (req, res) => {
     try {
-        const id = req.userId;
-        const user = await new ProfileService().getProfileUserLogin(id);
+        const {userId} = req.user;
+        const user = await new ProfileService().getProfileUserLogin(userId);
         res.status(200).json({
             status: "success",
             data: user
@@ -18,13 +18,12 @@ export const getProfileController = async (req, res) => {
 
 export const putProfileController = async (req, res) => {
     try {
-        const id = req.userId;
+        const {userId} = req.user;
         const { name, phone, gender, address } = req.body;
         const image = req.file;
-        const user = await new ProfileService().editProfileUser(id, { name, phone, gender, address, image });
+        const user = await new ProfileService().editProfileUser(userId, { name, phone, gender, address, image });
         res.status(200).json({
-            status: "success",
-            data: user
+            status: "success"
         })
     } catch (error) {
         res.status(error.status || 400).json({
@@ -36,12 +35,11 @@ export const putProfileController = async (req, res) => {
 
 export const putAvatarProfileCOntroller = async (req, res) => {
     try {
-        const id = req.userId;
+        const {userId} = req.user;
         const image = req.file;
-        const profile = await new ProfileService().editProfileAvatar(id, image);
+        const profile = await new ProfileService().editProfileAvatar(userId, image);
         res.status(200).json({
             status: "success",
-            data: profile
         })
     } catch (error) {
         res.status(error.status || 400).json({
@@ -53,8 +51,8 @@ export const putAvatarProfileCOntroller = async (req, res) => {
 
 export const deleteAvatarCOntroller = async (req, res) => {
     try {
-        const id = req.userId;
-        await new ProfileService().deleteAvatar(id);
+        const {userId} = req.user;
+        await new ProfileService().deleteAvatar(userId);
         res.status(200).json({
             status: "success",
         })

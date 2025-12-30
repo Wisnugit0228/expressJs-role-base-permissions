@@ -5,8 +5,7 @@ export const postRolePermissionController = async (req, res) => {
         const { role_id, permission_id } = req.body;
         const newRolePermission = await new RolePermissionService().createRolePermission({ role_id, permission_id });
         res.status(201).json({
-            status: 'success',
-            data: newRolePermission
+            status: 'success'
         })
     } catch (error) {
         res.status(error.status || 400).json({
