@@ -5,8 +5,7 @@ export const sendOtpResetPasswordController = async (req, res) => {
         const { email } = req.body;
         const otp = await new ResetPasswordService().sendOtp(email);
         res.status(200).json({
-            status: 'success',
-            data: otp
+            status: 'success'
         })
     } catch (error) {
         res.status(error.status || 400).json({
@@ -38,8 +37,7 @@ export const resendOtpResetController = async (req, res) => {
         const { email } = req.params;
         const otp = await new ResetPasswordService().resendOtp(email);
         res.status(200).json({
-            status: 'success',
-            data: otp
+            status: 'success'
         })
     } catch (error) {
         res.status(error.status || 400).json({
@@ -54,8 +52,7 @@ export const resetpasswordController = async (req, res) => {
         const { accessToken, password } = req.body;
         const reset = await new ResetPasswordService().resetpassword({ accessToken, password });
         res.status(200).json({
-            status: 'success',
-            data: reset
+            status: 'success'
         })
     } catch (error) {
         res.status(error.status || 400).json({

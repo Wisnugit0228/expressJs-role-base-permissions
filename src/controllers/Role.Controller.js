@@ -8,8 +8,7 @@ export const postRoleController = async (req, res) => {
         const newRole = await new RoleService().createRole({ name, description });
         res.status(201).json({
             status: 'success',
-            data: newRole
-        })
+        });
     } catch (error) {
         res.status(error.status || 400).json({
             status: 'error',

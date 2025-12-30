@@ -6,7 +6,7 @@ import { getAllUsersController, getUserLoginByIdController, LoginController, Log
 import { Authenticate } from '../middlewares/Authentication.js';
 import { hasPermission } from '../middlewares/HasPermission.js';
 import { addUserController, deleteUserController, getLoginHistoriesController } from '../controllers/SuperAdmin.Controller.js';
-import { postUserRoleController } from '../controllers/UserRole.Controller.js';
+import { editUserRoleController, postUserRoleController } from '../controllers/UserRole.Controller.js';
 import { deleteAvatarCOntroller, getProfileController, putAvatarProfileCOntroller, putProfileController } from '../controllers/Profile.Controller.js';
 import multer from 'multer';
 import { resendOtpResetController, resetpasswordController, sendOtpResetPasswordController, verifyOtpCOntroller } from '../controllers/ResetPassword.Controller.js';
@@ -55,6 +55,7 @@ router.get('/myusers', Authenticate, getUserLoginByIdController);
 //super admin
 router.post('/add-users', Authenticate, hasPermission('super admin', 'post'), addUserController);
 router.post("/user-role", Authenticate, hasPermission('super admin', 'post'), postUserRoleController);
+router.put("/user-role/:id", Authenticate, hasPermission('super admin', 'edit'), editUserRoleController);
 router.delete("/users/:email", Authenticate, hasPermission('super admin', 'delete'), deleteUserController);
 router.get('/login-histories', Authenticate, hasPermission('super admin', 'get'), getLoginHistoriesController);
 

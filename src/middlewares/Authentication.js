@@ -12,7 +12,12 @@ export const Authenticate = (req, res, next) => {
         if (err) {
             return res.status(403).json({ message: 'Forbidden' });
         }
-        req.userId = decoded.userId;
+        req.user = {
+            userId: decoded.sub,
+            email: decoded.email,
+            roles: decoded.roles || [],
+            permissions: decoded.permissions || []
+        };
         next();
     });
 }

@@ -7,8 +7,7 @@ export const postUserControlller = async (req, res) => {
         const newUser = await new UserService().createUser({ email, password });
         res.status(201).json({
             status: 'success',
-            data: newUser
-        })
+        });
     } catch (error) {
         res.status(error.status || 400).json({
             status: 'fail',
@@ -54,8 +53,7 @@ export const resendOtpController = async (req, res) => {
         const { email } = req.params;
         const newOtp = await new UserService().emailVerificationCode(email);
         res.status(200).json({
-            status: 'success',
-            data: newOtp
+            status: 'success'
         })
     } catch (error) {
         res.status(error.status || 400).json({
@@ -96,8 +94,7 @@ export const LogoutUserController = async (req, res) => {
         const logout = await new UserService().LogoutUser(refreshToken);
         res.clearCookie('refreshToken');
         res.status(200).json({
-            status: 'success',
-            data: logout
+            status: 'success'
         })
     } catch (error) {
         res.status(error.status || 400).json({
@@ -125,8 +122,8 @@ export const refreshTokenController = async (req, res) => {
 
 export const getUserLoginByIdController = async (req, res) => {
     try {
-        const id = req.userId;
-        const user = await new UserService().getUserLoginById(id);
+        const {userId} = req.user;
+        const user = await new UserService().getUserLoginById(userId);
         res.status(200).json({
             status: 'success',
             data: user

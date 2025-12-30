@@ -5,8 +5,7 @@ export const addUserController = async (req, res) => {
         const { email, password, role } = req.body;
         const newUser = await new SuperAdminService().createUser({ email, password, role });
         res.status(201).json({
-            status: 'success',
-            data: newUser
+            status: 'success'
         })
     } catch (error) {
         res.status(error.status || 400).json({
@@ -21,8 +20,7 @@ export const deleteUserController = async (req, res) => {
         const { email } = req.params;
         const deleteUser = await new SuperAdminService().deleteUser(email);
         res.status(200).json({
-            status: 'success',
-            data: deleteUser
+            status: 'success'
         })
     } catch (error) {
         res.status(error.status || 400).json({

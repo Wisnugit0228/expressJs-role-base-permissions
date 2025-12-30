@@ -1,9 +1,10 @@
 import { nanoid } from "nanoid";
-import { UserRoles } from "../models/Associations.js";
+import { UserRoles, Users } from "../models/Associations.js";
 
 class UserRoleService {
     constructor() {
         this._UserRoles = UserRoles;
+        this._Users = Users;
     }
 
     async addUserRole({ userId, roleId }) {
@@ -17,6 +18,18 @@ class UserRoleService {
             throw new Error("Failed to create user role");
         }
         return newRole.id;
+    }
+
+    async editUserRoleById(id, roleId) {
+        const user = await this._Users.findOne({where: {id}});
+        if (!user) {
+            throw new Error("User not found");
+        }
+
+        await this._UserRoles.update({
+            role_id: roleId
+        }, {where: {user_id: id}});
+        return;
     }
 }
 
